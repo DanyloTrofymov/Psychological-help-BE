@@ -17,6 +17,6 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - name: Build docker image
-      run: docker build -e DATABASE_URL=${{secrets.DATABASE_URL}} -e JWT_SECRET=${{secrets.JWT_SECRET}} --tag psychological-help-be .
+      run: docker build --env DATABASE_URL=${{secrets.DATABASE_URL}} --env JWT_SECRET=${{secrets.JWT_SECRET}} --tag psychological-help-be .
     - name: Push to Dockerhub
       run: docker push danylotrofymov/psychological-help-be:latest
