@@ -13,13 +13,13 @@ import {
 	INVALID_CREDENTIALS,
 	INVALID_TOKEN
 } from 'src/data/messages';
-import { REFRESH_TOKEN } from 'src/data/constants';
+import { BOT_TOKEN, REFRESH_TOKEN } from 'src/data/constants';
 
 @Injectable()
 export class AuthService {
 	private readonly logger = new Logger(AuthService.name);
 
-	constructor(private readonly prismaService: PrismaService) {}
+	constructor(private readonly prismaService: PrismaService) { }
 
 	async signIn(data: AuthRequest): Promise<AuthResponse> {
 		if (data.auth_date < Date.now() / 1000 - 86400) {
@@ -27,12 +27,11 @@ export class AuthService {
 		}
 		const data_check_string = this.buildDataCheckString(data);
 
-		const botToken = process.env.TELEGRAM_BOT_TOKEN;
-
+		console.log(BOT_TOKEN);
 		const isVerified = await this.verifyTelegramData(
 			data_check_string,
 			data.hash,
-			botToken
+			BOT_TOKEN
 		);
 		if (!isVerified) {
 			throw new UnauthorizedException({
