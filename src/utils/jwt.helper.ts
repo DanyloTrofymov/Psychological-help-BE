@@ -7,7 +7,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
 export function generateAccessToken(userId) {
 	return sign({ id: userId, type: ACCESS_TOKEN }, jwtSecret, {
-		expiresIn: '1m'
+		expiresIn: '15m'
 	});
 }
 export function generateRefreshToken(userId) {
