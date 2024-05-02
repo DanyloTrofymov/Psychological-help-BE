@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-
+	console.log('process.env.BASE_URL', process.env.BASE_URL);
 	app.enableCors({
 		origin: (origin, cb) => {
 			console.log('origin', origin);
+
+			console.log( origin.includes(process.env.BASE_URL!))
 			if (origin == undefined || origin.includes(process.env.BASE_URL!)) {
 				cb(null, true);
 			} else {
