@@ -1,0 +1,21 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      -  complited
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Pull docker image
+      run: sudo docker pull danylotrofymov/psychological-help-be:latest
+    - name: Delete old container
+      run: docker rm -f psychological-help-container-be || true
+    - name: Run new container
+      run: docker run -d -p 3001:3001 --name psychological-help-container-be danylotrofymov/psychological-help-be
