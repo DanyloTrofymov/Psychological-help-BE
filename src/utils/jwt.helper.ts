@@ -16,8 +16,9 @@ export function generateRefreshToken(userId) {
 	});
 }
 
-export function verifyToken(token) {
+export function verifyToken(request) {
 	try {
+		const token = extractTokenFromHeader(request);
 		return verify(token, jwtSecret);
 	} catch (error) {
 		throw new UnauthorizedException({
@@ -26,4 +27,12 @@ export function verifyToken(token) {
 			statusCode: 401
 		});
 	}
+}
+
+function extractTokenFromHeader(request: any): string | null {
+	const authHeader = request.headers.authorization;
+	if (authHeader && authHeader.startsWith('Bearer ')) {
+		return authHeader.substring(7); // Extract the token itself
+	}
+	return null;
 }

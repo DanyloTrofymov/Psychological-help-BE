@@ -72,6 +72,7 @@ export class AuthService {
 				statusCode: 401
 			});
 		}
+
 		const payload = verifyToken(refresh);
 
 		if (

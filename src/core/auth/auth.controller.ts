@@ -18,8 +18,9 @@ export class AuthController {
 	@Get('refresh-token')
 	@Public()
 	async refresh(
-		@Headers('authorization') refresh: string
+		@Headers('Authorization') refresh: string
 	): Promise<AuthResponse> {
+		console.log(refresh);
 		return await this.authService.refresh(refresh);
 	}
 

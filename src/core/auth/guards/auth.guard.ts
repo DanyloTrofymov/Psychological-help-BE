@@ -30,14 +30,13 @@ export class JwtAuthGuard implements CanActivate {
 		}
 
 		const request = context.switchToHttp().getRequest();
-		const token = this.extractTokenFromHeader(request);
 
-		if (!token) {
+		if (!request) {
 			throw new UnauthorizedException({ message: NO_TOKEN, statusCode: 401 });
 		}
 
 		try {
-			const payload = verifyToken(token);
+			const payload = verifyToken(request);
 			if (
 				!payload ||
 				typeof payload !== 'object' ||
@@ -70,13 +69,5 @@ export class JwtAuthGuard implements CanActivate {
 				statusCode: 401
 			});
 		}
-	}
-
-	private extractTokenFromHeader(request: any): string | null {
-		const authHeader = request.headers.authorization;
-		if (authHeader && authHeader.startsWith('Bearer ')) {
-			return authHeader.substring(7); // Extract the token itself
-		}
-		return null;
 	}
 }
