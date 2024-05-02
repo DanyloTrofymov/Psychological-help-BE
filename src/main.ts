@@ -6,6 +6,7 @@ async function bootstrap() {
 
 	app.enableCors({
 		origin: (origin, cb) => {
+			console.log('origin', origin);
 			if (origin == undefined || origin.includes(process.env.BASE_URL!)) {
 				cb(null, true);
 			} else {
