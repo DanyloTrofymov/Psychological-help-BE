@@ -18,4 +18,4 @@ jobs:
     - name: Delete old container
       run: docker rm -f psychological-help-container-be || true
     - name: Run new container
-      run: docker run -d -p 3001:3001 --name psychological-help-container-be danylotrofymov/psychological-help-be
+      run: docker run -d -p 3001:3001 --name psychological-help-container-be danylotrofymov/psychological-help-be --network=psycho-help
