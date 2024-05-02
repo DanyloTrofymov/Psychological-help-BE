@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  active    Boolean  @default(true)
+  avatarId  Int?
+
+  Avatar               Media?                 @relation(fields: [avatarId], references: [id])
+  Take                 Take[]
+  ChatroomParticipants ChatroomParticipants[]
+  ChatroomMessages     ChatroomMessages[]
+
+  @@map("users")
+}
+
+model Quiz {
+  id        Int      @id @default(autoincrement())
+  title     String
+  summary   String
+  subtitle  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  active    Boolean  @default(true)
+  maxScore  Int
+  mediaId   Int?
+
+  Media     Media?         @relation(fields: [mediaId], references: [id])
+  questions QuizQuestion[]
+  Take      Take[]
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id        Int      @id @default(autoincrement())
+  title     String
+  subtitle  String
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  mediaId   Int?
+
+  Media Media? @relation(fields: [mediaId], references: [id])
+
+  quizId Int
+  quiz   Quiz @relation(fields: [quizId], references: [id])
+
+  answers    QuizAnswer[]
+  TakeAnswer TakeAnswer[]
+
+  @@map("questions")
+}
+
+model QuizAnswer {
+  id        Int      @id @default(autoincrement())
+  title     String
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  mediaId   Int?
+
+  Media Media? @relation(fields: [mediaId], references: [id])
+
+  questionId Int
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+  TakeAnswer TakeAnswer[]
+
+  @@map("quiz_answers")
+}
+
+model Take {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  startedAt DateTime
+  endedAt   DateTime
+  meta      String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  quizId Int
+  quiz   Quiz @relation(fields: [quizId], references: [id])
+
+  answers TakeAnswer[]
+
+  @@map("takes")
+}
+
+model TakeAnswer {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  meta      String
+
+  takeId Int
+  take   Take @relation(fields: [takeId], references: [id])
+
+  questionId Int
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+
+  answerId Int
+  answer   QuizAnswer @relation(fields: [answerId], references: [id])
+
+  @@map("take_answers")
+}
+
+model Chatroom {
+  id                   Int                    @id @default(autoincrement())
+  title                String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @default(now()) @updatedAt
+  ChatroomParticipants ChatroomParticipants[]
+  ChatroomMessages     ChatroomMessages[]
+
+  @@map("chatrooms")
+}
+
+model ChatroomParticipants {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  chatroomId Int
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("chatroom_participants")
+}
+
+model ChatroomMessages {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  chatroomId Int
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("chatroom_messages")
+}
+
+model Article {
+  id        Int            @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
+  active    Boolean        @default(true)
+  media     ArticleMedia[]
+
+  @@map("articles")
+}
+
+model ArticleMedia {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  articleId Int
+  article   Article @relation(fields: [articleId], references: [id])
+
+  mediaId Int
+  media   Media @relation(fields: [mediaId], references: [id])
+
+  @@map("article_media")
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  active    Boolean  @default(true)
+  type      String
+  url       String
+
+  ArticleMedia ArticleMedia[]
+  User         User[]
+  Quiz         Quiz[]
+  QuizQuestion QuizQuestion[]
+  QuizAnswer   QuizAnswer[]
+
+  @@map("media")
+}
