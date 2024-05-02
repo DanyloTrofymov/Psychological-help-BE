@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Pull docker image
-      run: sudo docker pull danylotrofymov/psychological-help-be:latest
+      run: docker pull danylotrofymov/psychological-help-be:latest
     - name: Delete old container
       run: docker rm -f psychological-help-container-be || true
     - name: Run new container
