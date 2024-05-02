@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ["CI"]
     types:
-      - complited
+      - completed
 
 jobs:
 
