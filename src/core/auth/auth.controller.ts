@@ -20,7 +20,6 @@ export class AuthController {
 	async refresh(
 		@Headers('Authorization') refresh: string
 	): Promise<AuthResponse> {
-		console.log(refresh);
 		return await this.authService.refresh(refresh);
 	}
 

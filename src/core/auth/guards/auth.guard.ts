@@ -15,7 +15,7 @@ export class JwtAuthGuard implements CanActivate {
 	constructor(
 		private reflector: Reflector,
 		private prismaService: PrismaService
-	) {}
+	) { }
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const IS_PUBLIC = 'is_public';
@@ -36,7 +36,7 @@ export class JwtAuthGuard implements CanActivate {
 		}
 
 		try {
-			const payload = verifyToken(request);
+			const payload = verifyToken(request.headers.authorization);
 			if (
 				!payload ||
 				typeof payload !== 'object' ||

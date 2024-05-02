@@ -30,9 +30,8 @@ export function verifyToken(request) {
 }
 
 function extractTokenFromHeader(request: any): string | null {
-	const authHeader = request.headers.authorization;
-	if (authHeader && authHeader.startsWith('Bearer ')) {
-		return authHeader.substring(7); // Extract the token itself
+	if (request && request.startsWith('Bearer ')) {
+		return request.substring(7);
 	}
 	return null;
 }
