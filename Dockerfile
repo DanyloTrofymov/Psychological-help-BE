@@ -4,8 +4,12 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app
+ARG DATABASE_URL
+ARG JWT_SECRET
 
-ENV BASE_URL=https://getpsychohelp.com
+ENV DATABASE_URL=$DATABASE_URL
+ENV JWT_SECRET=$JWT_SECRET
+ENV BASEURL=https://getpsychohelp.com
 
 EXPOSE 3001
 
