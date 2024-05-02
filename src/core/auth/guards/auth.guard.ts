@@ -5,6 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ACCESS_TOKEN } from 'src/data/constants';
 import { INVALID_TOKEN, NO_TOKEN } from 'src/data/messages';
 import { PrismaService } from 'src/integrations/prisma/prisma.service';
 import { verifyToken } from 'src/utils/jwt.helper';
@@ -35,14 +36,12 @@ export class JwtAuthGuard implements CanActivate {
 			throw new UnauthorizedException({ message: NO_TOKEN, statusCode: 401 });
 		}
 
-		// Validate the token
 		try {
-			// Verify the token
 			const payload = verifyToken(token);
 			if (
 				!payload ||
 				typeof payload !== 'object' ||
-				payload.type !== 'access'
+				payload.type !== ACCESS_TOKEN
 			) {
 				throw new UnauthorizedException({
 					message: INVALID_TOKEN,

@@ -22,4 +22,4 @@ jobs:
     - name: Pull docker image
       run: docker pull danylotrofymov/psychological-help-be:latest
     - name: Run new container
-      run: docker run -d -p 3001:3001  --network psycho-help --name psychological-help-container-be danylotrofymov/psychological-help-be 
+      run: docker run -d -p 3001:3001 --network psycho-help --name psychological-help-container-be danylotrofymov/psychological-help-be 

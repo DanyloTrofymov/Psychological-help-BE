@@ -8,7 +8,12 @@ import {
 	generateRefreshToken,
 	verifyToken
 } from 'src/utils/jwt.helper';
-import { INVALID_CREDENTIALS, INVALID_TOKEN } from 'src/data/messages';
+import {
+	DATA_OLD,
+	INVALID_CREDENTIALS,
+	INVALID_TOKEN
+} from 'src/data/messages';
+import { REFRESH_TOKEN } from 'src/data/constants';
 
 @Injectable()
 export class AuthService {
@@ -18,11 +23,11 @@ export class AuthService {
 
 	async signIn(data: AuthRequest): Promise<AuthResponse> {
 		if (data.auth_date < Date.now() / 1000 - 86400) {
-			throw new UnauthorizedException({ message: 'Data is too old!' });
+			throw new UnauthorizedException({ message: DATA_OLD, statusCode: 401 });
 		}
 		const data_check_string = this.buildDataCheckString(data);
 
-		const botToken = '6678320927:AAFD8Qo1swIBU0QZxYMVPruphRRRu240wKE';
+		const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
 		const isVerified = await this.verifyTelegramData(
 			data_check_string,
@@ -61,7 +66,6 @@ export class AuthService {
 	}
 
 	async refresh(refresh: string): Promise<AuthResponse> {
-		// decode the refresh token
 		if (!refresh) {
 			throw new UnauthorizedException({
 				message: INVALID_TOKEN,
@@ -69,7 +73,12 @@ export class AuthService {
 			});
 		}
 		const payload = verifyToken(refresh);
-		if (!payload || typeof payload !== 'object' || payload.type !== 'refresh') {
+
+		if (
+			!payload ||
+			typeof payload !== 'object' ||
+			payload.type !== REFRESH_TOKEN
+		) {
 			throw new UnauthorizedException({
 				message: INVALID_TOKEN,
 				statusCode: 401
