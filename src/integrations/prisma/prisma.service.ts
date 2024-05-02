@@ -3,16 +3,16 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  async onModuleInit() {
-    await this.$connect();
+	async onModuleInit() {
+		await this.$connect();
 
-    this.enableUserHooks();
-  }
+		this.enableUserHooks();
+	}
 
-  enableUserHooks() {
-    this.$use(async (params, next) => {
-      // console.log('params', params);
-      return await next(params);
-    });
-  }
+	enableUserHooks() {
+		this.$use(async (params, next) => {
+			// console.log('params', params);
+			return await next(params);
+		});
+	}
 }
