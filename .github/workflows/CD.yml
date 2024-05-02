@@ -14,11 +14,11 @@ jobs:
 
     steps:
     - name: Stop container
-      run: docker stop psychological-help-container-be
-    - name: Delete old image
-      run: docker image rm danylotrofymov/psychological-help-fe
+      run: docker stop psychological-help-container-be || true
     - name: Delete old container
       run: docker rm -f psychological-help-container-be || true
+    - name: Delete old image
+      run: docker image rm danylotrofymov/psychological-help-be || true
     - name: Pull docker image
       run: docker pull danylotrofymov/psychological-help-be:latest
     - name: Run new container
