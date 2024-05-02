@@ -9,7 +9,7 @@ ARG JWT_SECRET
 
 ENV DATABASE_URL=$DATABASE_URL
 ENV JWT_SECRET=$JWT_SECRET
-ENV BASEURL=https://getpsychohelp.com
+ENV BASE_URL=https://getpsychohelp.com
 
 EXPOSE 3001
 
