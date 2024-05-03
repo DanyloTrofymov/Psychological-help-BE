@@ -39,8 +39,12 @@ export class QuizService {
 		});
 	}
 
-	async findAll() {
+	async findAll(page, pageSize) {
+		const skip = (page - 1) * pageSize;
+		const take = pageSize;
 		return await this.prismaService.quiz.findMany({
+			skip,
+			take,
 			include: {
 				_count: {
 					select: { questions: true }
