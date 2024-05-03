@@ -20,11 +20,13 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt
   active    Boolean  @default(true)
   avatarId  Int?
+  roleId    Int?     @default(0)
 
-  Avatar               Media?                 @relation(fields: [avatarId], references: [id])
-  Take                 Take[]
-  ChatroomParticipants ChatroomParticipants[]
-  ChatroomMessages     ChatroomMessages[]
+  role                 Role?                  @relation(fields: [roleId], references: [id])
+  avatar               Media?                 @relation(fields: [avatarId], references: [id])
+  take                 Take[]
+  chatroomParticipants ChatroomParticipants[]
+  chatroomMessages     ChatroomMessages[]
 
   @@map("users")
 }
@@ -33,16 +35,16 @@ model Quiz {
   id        Int      @id @default(autoincrement())
   title     String
   summary   String
-  subtitle  String
+  subtitle  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   active    Boolean  @default(true)
   maxScore  Int
   mediaId   Int?
 
-  Media     Media?         @relation(fields: [mediaId], references: [id])
+  media     Media?         @relation(fields: [mediaId], references: [id])
   questions QuizQuestion[]
-  Take      Take[]
+  take      Take[]
 
   @@map("quizzes")
 }
@@ -50,19 +52,18 @@ model Quiz {
 model QuizQuestion {
   id        Int      @id @default(autoincrement())
   title     String
-  subtitle  String
-  type      String
+  subtitle  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   mediaId   Int?
 
-  Media Media? @relation(fields: [mediaId], references: [id])
+  media Media? @relation(fields: [mediaId], references: [id])
 
   quizId Int
   quiz   Quiz @relation(fields: [quizId], references: [id])
 
   answers    QuizAnswer[]
-  TakeAnswer TakeAnswer[]
+  takeAnswer TakeAnswer[]
 
   @@map("questions")
 }
@@ -79,7 +80,7 @@ model QuizAnswer {
 
   questionId Int
   question   QuizQuestion @relation(fields: [questionId], references: [id])
-  TakeAnswer TakeAnswer[]
+  takeAnswer TakeAnswer[]
 
   @@map("quiz_answers")
 }
@@ -161,32 +162,6 @@ model ChatroomMessages {
   @@map("chatroom_messages")
 }
 
-model Article {
-  id        Int            @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now()) @updatedAt
-  active    Boolean        @default(true)
-  media     ArticleMedia[]
-
-  @@map("articles")
-}
-
-model ArticleMedia {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  articleId Int
-  article   Article @relation(fields: [articleId], references: [id])
-
-  mediaId Int
-  media   Media @relation(fields: [mediaId], references: [id])
-
-  @@map("article_media")
-}
-
 model Media {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -195,11 +170,22 @@ model Media {
   type      String
   url       String
 
-  ArticleMedia ArticleMedia[]
-  User         User[]
-  Quiz         Quiz[]
-  QuizQuestion QuizQuestion[]
-  QuizAnswer   QuizAnswer[]
+  user         User[]
+  quiz         Quiz[]
+  quizQuestion QuizQuestion[]
+  quizAnswer   QuizAnswer[]
 
   @@map("media")
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String
+  key       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user User[]
+
+  @@map("roles")
 }

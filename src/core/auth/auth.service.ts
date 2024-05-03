@@ -44,7 +44,7 @@ export class AuthService {
 			update: {
 				id: data.id,
 				name: data.first_name,
-				Avatar: {
+				avatar: {
 					upsert: {
 						create: { type: 'image', url: data.photo_url },
 						update: { url: data.photo_url }

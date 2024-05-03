@@ -9,8 +9,10 @@ export interface CurrentUserResponse {
 	createdAt: Date;
 	updatedAt: Date;
 	active: boolean;
+	roleId: number;
+	role: RoleResponse;
 	avatarId: number;
-	Avatar: MediaResponse;
+	avatar: MediaResponse;
 }
 
 export interface MediaResponse {
@@ -19,4 +21,12 @@ export interface MediaResponse {
 	createdAt: Date;
 	updatedAt: Date;
 	type: string;
+}
+
+export interface RoleResponse {
+	id: number;
+	name: string;
+	key: string;
+	createdAt: Date;
+	updatedAt: Date;
 }

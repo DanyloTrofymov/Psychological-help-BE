@@ -6,6 +6,7 @@ CREATE TABLE "users" (
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "avatarId" INTEGER,
+    "roleId" INTEGER DEFAULT 0,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -15,7 +16,7 @@ CREATE TABLE "quizzes" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "summary" TEXT NOT NULL,
-    "subtitle" TEXT NOT NULL,
+    "subtitle" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "active" BOOLEAN NOT NULL DEFAULT true,
@@ -29,8 +30,7 @@ CREATE TABLE "quizzes" (
 CREATE TABLE "questions" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
-    "subtitle" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
+    "subtitle" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "mediaId" INTEGER,
@@ -113,29 +113,6 @@ CREATE TABLE "chatroom_messages" (
 );
 
 -- CreateTable
-CREATE TABLE "articles" (
-    "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "active" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "articles_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "article_media" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "articleId" INTEGER NOT NULL,
-    "mediaId" INTEGER NOT NULL,
-
-    CONSTRAINT "article_media_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "media" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -146,6 +123,28 @@ CREATE TABLE "media" (
 
     CONSTRAINT "media_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "roles" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+);
+
+INSERT INTO "roles" ("id", "name", "key") 
+VALUES	(0, 'User', 'USER'),
+				(1, 'Therapist', 'THERAPIST'),										
+				(2, 'Admin', 'ADMIN');
+
+-- CreateIndex
+CREATE UNIQUE INDEX "roles_key_key" ON "roles"("key");
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_avatarId_fkey" FOREIGN KEY ("avatarId") REFERENCES "media"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -191,9 +190,3 @@ ALTER TABLE "chatroom_messages" ADD CONSTRAINT "chatroom_messages_chatroomId_fke
 
 -- AddForeignKey
 ALTER TABLE "chatroom_messages" ADD CONSTRAINT "chatroom_messages_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "article_media" ADD CONSTRAINT "article_media_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "article_media" ADD CONSTRAINT "article_media_mediaId_fkey" FOREIGN KEY ("mediaId") REFERENCES "media"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -15,7 +15,7 @@ export class JwtAuthGuard implements CanActivate {
 	constructor(
 		private reflector: Reflector,
 		private prismaService: PrismaService
-	) { }
+	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const IS_PUBLIC = 'is_public';
@@ -49,7 +49,7 @@ export class JwtAuthGuard implements CanActivate {
 			}
 			const user = await this.prismaService.user.findUnique({
 				where: { id: payload.id },
-				include: { Avatar: true }
+				include: { avatar: true, role: true }
 			});
 
 			if (!user) {

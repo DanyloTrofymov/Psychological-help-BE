@@ -14,7 +14,7 @@ async function bootstrap() {
 		},
 		credentials: true,
 		allowedHeaders:
-			'Accept, Content-Type, Authorization, X-Requested-With, Content-Length, Origin, X-Powered-By, User-Agent, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Access-Control-Allow-Methods',
+			'Accept, Content-Type, Authorization, X-Requested-With, Content-Length, Origin, X-Powered-By, User-Agent, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Access-Control-Allow-Methods'
 	});
 	await app.listen(3001);
 }
