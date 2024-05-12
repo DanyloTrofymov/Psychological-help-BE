@@ -47,6 +47,7 @@ export class JwtAuthGuard implements CanActivate {
 					statusCode: 401
 				});
 			}
+
 			const user = await this.prismaService.user.findUnique({
 				where: { id: payload.id },
 				include: { avatar: true, role: true }

@@ -35,7 +35,12 @@ export class QuizService {
 					}))
 				}
 			},
-			include: { questions: { include: { answers: true } } }
+			include: {
+				questions: {
+					include: { answers: { include: { media: true } }, media: true }
+				},
+				media: true
+			}
 		});
 	}
 
@@ -46,6 +51,7 @@ export class QuizService {
 			skip,
 			take,
 			include: {
+				media: true,
 				_count: {
 					select: { questions: true }
 				}
@@ -56,46 +62,69 @@ export class QuizService {
 	async findOne(id: number) {
 		return await this.prismaService.quiz.findUnique({
 			where: { id },
-			include: { questions: { include: { answers: true } } }
+			include: {
+				questions: {
+					include: { answers: { include: { media: true } }, media: true }
+				},
+				media: true
+			}
 		});
 	}
 
 	async update(id: number, updateQuizDto: UpdateQuizDto) {
 		try {
-			return await this.prismaService.quiz.update({
-				where: { id },
+			const quizUpdatePromise = this.prismaService.quiz.update({
+				where: { id: id },
 				data: {
-					...updateQuizDto,
+					mediaId: updateQuizDto.mediaId,
+					summary: updateQuizDto.summary,
+					title: updateQuizDto.title,
+					subtitle: updateQuizDto.subtitle,
 					maxScore: this.getQuizMaxScore(updateQuizDto),
 					questions: {
 						updateMany: updateQuizDto.questions.map(question => ({
 							where: { id: question.id },
 							data: {
-								...question,
-								answers: {
-									updateMany: question.answers.map(answer => ({
-										where: { id: answer.id },
-										data: { ...answer }
-									})),
-									create: question.answers
-										.filter(answer => !answer.id)
-										.map(answer => ({
-											...answer
-										}))
-								}
+								mediaId: question.mediaId,
+								title: question.title,
+								subtitle: question.subtitle
 							}
-						})),
-						create: updateQuizDto.questions
-							.filter(question => !question.id)
-							.map(question => ({
-								...question,
-								answers: { create: question.answers }
-							}))
+						}))
 					}
 				},
-				include: { questions: { include: { answers: true } } }
+				include: {
+					questions: {
+						include: {
+							answers: true,
+							media: true
+						}
+					},
+					media: true
+				}
 			});
+
+			const answersUpdatePromises = updateQuizDto.questions.flatMap(question =>
+				question.answers.map(answer =>
+					this.prismaService.quizAnswer.update({
+						where: { id: answer.id },
+						data: {
+							title: answer.title,
+							score: answer.score,
+							mediaId: answer.mediaId
+						}
+					})
+				)
+			);
+
+			// Execute all updates as a transaction
+			await this.prismaService.$transaction([
+				quizUpdatePromise,
+				...answersUpdatePromises
+			]);
+
+			return quizUpdatePromise;
 		} catch (error) {
+			console.error(error);
 			throw new NotFoundException('Quiz not found');
 		}
 	}

@@ -76,7 +76,7 @@ model QuizAnswer {
   updatedAt DateTime @default(now()) @updatedAt
   mediaId   Int?
 
-  Media Media? @relation(fields: [mediaId], references: [id])
+  edia Media? @relation(fields: [mediaId], references: [id])
 
   questionId Int
   question   QuizQuestion @relation(fields: [questionId], references: [id])
