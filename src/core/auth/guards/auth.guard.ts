@@ -24,7 +24,6 @@ export class JwtAuthGuard implements CanActivate {
 			context.getClass()
 		]);
 
-		// Proceed if it's a public route
 		if (isPublic) {
 			return true;
 		}

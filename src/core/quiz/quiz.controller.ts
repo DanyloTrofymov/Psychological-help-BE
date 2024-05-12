@@ -13,7 +13,7 @@ import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { Roles } from '../auth/guards/roles.guard';
 import { ROLE } from '../../data/types';
-
+import { Public } from '../auth/decorators/public.decorator';
 @Controller('quiz')
 export class QuizController {
 	constructor(private readonly quizService: QuizService) {}
@@ -25,6 +25,7 @@ export class QuizController {
 	}
 
 	@Get()
+	@Public()
 	findAll(
 		@Query('page') page: number = 1,
 		@Query('pageSize') pageSize: number = 10
