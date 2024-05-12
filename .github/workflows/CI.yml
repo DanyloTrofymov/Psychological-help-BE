@@ -12,7 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Create google cloud file
-    - run: cat <<EOF > .google-env.json
+    - run: |
+          cat <<EOF > .google-env.json
           "$GOOGLE_ENV"
           EOF
     - name: Login Dockerhub
