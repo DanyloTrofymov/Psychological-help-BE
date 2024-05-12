@@ -89,9 +89,6 @@ model Take {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  startedAt DateTime
-  endedAt   DateTime
-  meta      String
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
@@ -108,7 +105,6 @@ model TakeAnswer {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  meta      String
 
   takeId Int
   take   Take @relation(fields: [takeId], references: [id])

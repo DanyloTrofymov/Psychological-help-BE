@@ -11,9 +11,10 @@ import { QuizController } from './core/quiz/quiz.controller';
 import { QuizModule } from './core/quiz/quiz.module';
 import { AllExceptionsFilter } from './exception.filter';
 import { MediaModule } from './core/media/media.module';
+import { TakeModule } from './core/take/take.module';
 
 @Module({
-	imports: [PrismaModule, AuthModule, QuizModule, MediaModule],
+	imports: [PrismaModule, AuthModule, QuizModule, MediaModule, TakeModule],
 	controllers: [AppController, AuthController, QuizController],
 	providers: [
 		AppService,
