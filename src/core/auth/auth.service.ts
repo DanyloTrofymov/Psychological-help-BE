@@ -39,21 +39,41 @@ export class AuthService {
 			});
 		}
 
+		let avatarUrl: string | null = null;
+		if (data.photo_url) {
+			try {
+				const response = await fetch(data.photo_url);
+				if (response.status === 200) {
+					avatarUrl = data.photo_url;
+				}
+			} catch (error) {
+				console.error('Error fetching avatar:', error);
+			}
+		}
+
 		const user = await this.prismaService.user.upsert({
 			where: { id: data.id },
 			update: {
 				id: data.id,
 				name: data.first_name,
-				avatar: {
-					upsert: {
-						create: { type: 'image', url: data.photo_url },
-						update: { url: data.photo_url }
-					}
-				}
+				avatar: avatarUrl ?
+					{
+						upsert: {
+							create: { type: 'image', url: avatarUrl },
+							update: { url: avatarUrl }
+						}
+					} : { disconnect: true }
 			},
-			create: { id: data.id, name: data.first_name }
+			create: {
+				id: data.id,
+				name: data.first_name,
+				...(avatarUrl && {
+					avatar: {
+						create: { type: 'image', url: avatarUrl }
+					}
+				})
+			}
 		});
-
 		const accessToken = generateAccessToken(user.id);
 		const refreshToken = generateRefreshToken(user.id);
 
@@ -71,7 +91,7 @@ export class AuthService {
 			});
 		}
 
-		const payload = verifyToken(refresh);
+		const payload = this.verifyAnyToken(refresh);
 
 		if (
 			!payload ||
@@ -127,5 +147,21 @@ export class AuthService {
 		).join('');
 
 		return signatureHex === hash;
+	}
+
+	verifyAnyToken(token: string) {
+		const payload = verifyToken(token);
+
+		if (
+			!payload ||
+			typeof payload !== 'object' ||
+			payload.type !== REFRESH_TOKEN
+		) {
+			throw new UnauthorizedException({
+				message: INVALID_TOKEN,
+				statusCode: 401
+			});
+		}
+		return payload;
 	}
 }

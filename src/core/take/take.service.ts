@@ -13,7 +13,7 @@ export class TakeService {
 		if (!Array.isArray(answers) || answers.length === 0) {
 			throw new BadRequestException('Answers must be a non-empty array.');
 		}
-		console.log(answers);
+
 		const validAnswerIds = await this.prismaService.quizAnswer
 			.findMany({
 				where: { questionId: { in: answers.map(a => a.questionId) } },
@@ -27,7 +27,7 @@ export class TakeService {
 			);
 		}
 
-		return this.prismaService.$transaction(async tx => {
+		return await this.prismaService.$transaction(async tx => {
 			const takeData: Prisma.TakeCreateInput = {
 				quiz: { connect: { id: quizId } },
 				user: { connect: { id: userId } },

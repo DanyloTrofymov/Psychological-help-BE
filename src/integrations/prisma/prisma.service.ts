@@ -11,7 +11,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 	enableUserHooks() {
 		this.$use(async (params, next) => {
-			// console.log('params', params);
 			return await next(params);
 		});
 	}

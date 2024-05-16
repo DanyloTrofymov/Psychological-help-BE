@@ -12,10 +12,12 @@ import { QuizModule } from './core/quiz/quiz.module';
 import { AllExceptionsFilter } from './exception.filter';
 import { MediaModule } from './core/media/media.module';
 import { TakeModule } from './core/take/take.module';
+import { ChatroomController } from './core/chatroom/chatroom.controller';
+import { ChatroomModule } from './core/chatroom/chatroom.module';
 
 @Module({
-	imports: [PrismaModule, AuthModule, QuizModule, MediaModule, TakeModule],
-	controllers: [AppController, AuthController, QuizController],
+	imports: [PrismaModule, AuthModule, QuizModule, MediaModule, TakeModule, ChatroomModule],
+	controllers: [AppController, AuthController, QuizController, ChatroomController],
 	providers: [
 		AppService,
 		{
@@ -29,7 +31,7 @@ import { TakeModule } from './core/take/take.module';
 		{
 			provide: APP_FILTER,
 			useClass: AllExceptionsFilter
-		}
+		},
 	]
 })
 export class AppModule {}
