@@ -6,7 +6,9 @@ import {
 	Patch,
 	Param,
 	Delete,
-	Query
+	Query,
+	ParseIntPipe,
+	Request
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizDto } from './dto/create-quiz.dto';
@@ -27,32 +29,40 @@ export class QuizController {
 	@Get()
 	@Public()
 	findAll(
-		@Query('page') page: number = 0,
-		@Query('pageSize') pageSize: number = 10
+		@Request() req,
+		@Query('page', ParseIntPipe) page: number = 0,
+		@Query('pageSize', ParseIntPipe) pageSize: number = 10
 	) {
-		return this.quizService.findAll(page, pageSize);
+		console.log(req?.user?.id);
+		return this.quizService.findAll(page, pageSize, req?.user?.id);
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.quizService.findOne(+id);
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.quizService.findOne(id);
 	}
 
 	@Patch(':id')
 	@Roles(ROLE.ADMIN)
-	update(@Param('id') id: string, @Body() updateQuizDto: UpdateQuizDto) {
-		return this.quizService.update(+id, updateQuizDto);
+	update(@Param('id', ParseIntPipe) id: number, @Body() updateQuizDto: UpdateQuizDto) {
+		return this.quizService.update(id, updateQuizDto);
 	}
 
 	@Delete(':id')
 	@Roles(ROLE.ADMIN)
-	removeQuiz(@Param('id') id: string) {
-		return this.quizService.removeQuiz(+id);
+	removeQuiz(@Param('id', ParseIntPipe) id: number) {
+		return this.quizService.removeQuiz(id);
 	}
 
 	@Delete('/answer/:id')
 	@Roles(ROLE.ADMIN)
-	removeAnswer(@Param('id') id: string) {
-		return this.quizService.removeAnswer(+id);
+	removeAnswer(@Param('id', ParseIntPipe) id: number) {
+		return this.quizService.removeAnswer(id);
+	}
+
+	@Get('statistics/:id')
+	@Roles(ROLE.ADMIN)
+	getStatistics(@Param('id', ParseIntPipe) id: number) {
+		return this.quizService.getQuizStatistics(id);
 	}
 }

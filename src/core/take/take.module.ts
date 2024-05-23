@@ -6,4 +6,4 @@ import { TakeController } from './take.controller';
 	controllers: [TakeController],
 	providers: [TakeService]
 })
-export class TakeModule {}
+export class TakeModule { }

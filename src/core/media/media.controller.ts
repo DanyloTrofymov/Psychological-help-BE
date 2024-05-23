@@ -5,7 +5,8 @@ import {
 	Param,
 	Delete,
 	UseInterceptors,
-	UploadedFile
+	UploadedFile,
+	ParseIntPipe
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,12 +25,12 @@ export class MediaController {
 
 	@Get(':id')
 	@Public()
-	findOne(@Param('id') id: string) {
-		return this.mediaService.findOne(+id);
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.mediaService.findOne(id);
 	}
 	@Delete(':id')
 	@Roles('ADMIN')
-	remove(@Param('id') id: string) {
-		return this.mediaService.remove(+id);
+	remove(@Param('id', ParseIntPipe) id: number) {
+		return this.mediaService.remove(id);
 	}
 }

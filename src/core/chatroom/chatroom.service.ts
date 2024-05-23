@@ -46,8 +46,8 @@ export class ChatroomService {
 			include: {
 				ChatroomParticipants: true,
 			},
-			take: Number(pageSize),
-			skip: Number(page) * Number(pageSize),
+			take: pageSize,
+			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 
@@ -119,8 +119,8 @@ export class ChatroomService {
 	async getAllChatrooms(page: number, pageSize: number) {
 		return await this.prismaService.chatroom.findMany({
 			include: { ChatroomParticipants: true },
-			take: Number(pageSize),
-			skip: Number(page) * Number(pageSize),
+			take: pageSize,
+			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 	}
@@ -129,33 +129,33 @@ export class ChatroomService {
 		return await this.prismaService.chatroom.findMany({
 			where: { ChatroomParticipants: { some: { userId } }, withAI: true, active: true },
 			include: { ChatroomParticipants: true },
-			take: Number(pageSize),
-			skip: Number(page) * Number(pageSize),
+			take: pageSize,
+			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 	}
 
 	async getUsersChatrooms(userId: number, page: number, pageSize: number) {
 		return await this.prismaService.chatroom.findMany({
-			where: { ChatroomParticipants: { some: { userId } }, withAI: false, active: true }, take: Number(pageSize),
+			where: { ChatroomParticipants: { some: { userId } }, withAI: false, active: true }, take: pageSize,
 			include: { ChatroomParticipants: true },
-			skip: Number(page) * Number(pageSize),
+			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 	}
 
 	async getMessagesByChatroomId(chatroomId: number, page: number, pageSize: number) {
 		return await this.prismaService.chatroomMessages.findMany({
-			where: { chatroomId: Number(chatroomId) },
+			where: { chatroomId: chatroomId },
 			include: { user: { include: { avatar: true } } },
-			take: Number(pageSize),
-			skip: Number(page) * Number(pageSize),
+			take: pageSize,
+			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 	}
 
 	async renameChatroom(chatroomId: number, title: string, user: CurrentUserResponse) {
-		const chatroom = await this.prismaService.chatroom.findUnique({ where: { id: Number(chatroomId) }, include: { ChatroomParticipants: true } });
+		const chatroom = await this.prismaService.chatroom.findUnique({ where: { id: chatroomId }, include: { ChatroomParticipants: true } });
 		if (!chatroom) {
 			throw new Error('Chatroom not found');
 		}
@@ -163,13 +163,13 @@ export class ChatroomService {
 			throw new Error('You are not a participant in this chatroom');
 		}
 		return await this.prismaService.chatroom.update({
-			where: { id: Number(chatroomId) },
+			where: { id: chatroomId },
 			data: { title }
 		});
 	}
 
 	async deleteChatroom(chatroomId: number, user: CurrentUserResponse) {
-		const chatroom = await this.prismaService.chatroom.findUnique({ where: { id: Number(chatroomId) }, include: { ChatroomParticipants: true } });
+		const chatroom = await this.prismaService.chatroom.findUnique({ where: { id: chatroomId }, include: { ChatroomParticipants: true } });
 		if (!chatroom) {
 			throw new Error('Chatroom not found');
 		}
@@ -177,7 +177,7 @@ export class ChatroomService {
 			throw new Error('You are not a participant in this chatroom');
 		}
 		return await this.prismaService.chatroom.update({
-			where: { id: Number(chatroomId) },
+			where: { id: chatroomId },
 			data: { active: false }
 		});
 	}
@@ -216,7 +216,7 @@ export class ChatroomService {
 	}
 
 	async getResultString(takeId: number) {
-		const take = await this.prismaService.take.findUnique({ where: { id: Number(takeId) }, include: { answers: true, quiz: { include: { questions: { include: { answers: true } } } } } });
+		const take = await this.prismaService.take.findUnique({ where: { id: (takeId) }, include: { answers: true, quiz: { include: { questions: { include: { answers: true } } } } } });
 		const answers = take.answers.map(answer => {
 			const question = take.quiz.questions.find(q => q.id === answer.questionId);
 			return { question, answer, score: question.answers.find(a => a.id === answer.answerId).score };

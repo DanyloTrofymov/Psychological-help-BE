@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request, ParseIntPipe } from '@nestjs/common';
 import { TakeService } from './take.service';
 import { CreateTakeDto } from './dto/create-take.dto';
 import { Roles } from '../auth/guards/roles.guard';
@@ -25,7 +25,7 @@ export class TakeController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.takeService.findOne(+id);
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.takeService.findOne(id);
 	}
 }

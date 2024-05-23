@@ -23,14 +23,11 @@ export class JwtAuthGuard implements CanActivate {
 			context.getHandler(),
 			context.getClass()
 		]);
-
-		if (isPublic) {
-			return true;
-		}
-
 		const request = context.switchToHttp().getRequest();
 
 		if (!request) {
+			if (isPublic)
+				return true;
 			throw new UnauthorizedException({ message: NO_TOKEN, statusCode: 401 });
 		}
 
@@ -41,6 +38,8 @@ export class JwtAuthGuard implements CanActivate {
 				typeof payload !== 'object' ||
 				payload.type !== ACCESS_TOKEN
 			) {
+				if (isPublic)
+					return true;
 				throw new UnauthorizedException({
 					message: INVALID_TOKEN,
 					statusCode: 401
@@ -53,6 +52,8 @@ export class JwtAuthGuard implements CanActivate {
 			});
 
 			if (!user) {
+				if (isPublic)
+					return true;
 				throw new UnauthorizedException({
 					message: INVALID_TOKEN,
 					statusCode: 401
@@ -63,6 +64,8 @@ export class JwtAuthGuard implements CanActivate {
 
 			return true;
 		} catch (error) {
+			if (isPublic)
+				return true;
 			throw new UnauthorizedException({
 				message: INVALID_TOKEN,
 				error: error.message,
