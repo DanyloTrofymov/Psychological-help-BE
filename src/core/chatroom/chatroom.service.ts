@@ -46,12 +46,13 @@ export class ChatroomService {
 			include: {
 				ChatroomParticipants: true,
 			},
+			where: { active: true },
 			take: pageSize,
 			skip: page * pageSize,
 			orderBy: { updatedAt: 'desc' }
 		});
 
-		return await chatrooms.filter(chatroom => chatroom.ChatroomParticipants.length === 1);
+		return await chatrooms.filter(chatroom => chatroom.ChatroomParticipants.length === 1 && !chatroom.withAI);
 	}
 
 	async joinChatroom(chatroomId: number, userId: number, role?: ROLE) {
@@ -62,7 +63,7 @@ export class ChatroomService {
 		if (room.ChatroomParticipants.some(p => p.userId == userId)) {
 			throw new Error('You are already a participant in this chatroom');
 		}
-		if (role == ROLE.THERAPIST && !room.withAI && room.ChatroomParticipants.length == 1) {
+		if (role == ROLE.THERAPIST && (room.withAI || room.ChatroomParticipants.length > 1)) {
 			throw new Error('You can not join this chatroom as a therapist');
 		}
 
@@ -223,7 +224,7 @@ export class ChatroomService {
 		});
 		const answersString = answers.map(a => `${a.question.title} - ${a.answer.answerId} - ${a.score} юалів`).join('\n');
 		const sumOfScores = answers.reduce((acc, a) => acc + a.score, 0);
-		const message = `Привіт! Я пройшов тест ${take.quiz.title}. Ось мої відповіді у фломаті: Запитання - відповідь - бали. ${answersString}\n Результати тесту: ${sumOfScores} балів. Опис результату: ${take.quiz.summary}`;
+		const message = `Привіт! Я пройшов тест ${take.quiz.title}. Ось мої відповіді у форматі: Запитання - відповідь - бали. ${answersString}\n Результати тесту: ${sumOfScores} балів. Опис результату: ${take.quiz.summary}`;
 		return message;
 	}
 

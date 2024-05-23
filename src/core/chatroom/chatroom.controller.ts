@@ -36,7 +36,7 @@ export class ChatroomController {
 	@Roles([ROLE.ADMIN, ROLE.THERAPIST])
 	@Post('joinRoom')
 	async joinRoom(@Request() req, @Body() body: { chatroomId: number }) {
-		return await this.chatroomService.joinChatroom(body.chatroomId, req.user.id);
+		return await this.chatroomService.joinChatroom(body.chatroomId, req.user.id, req.user.role);
 	}
 
 	@Post('pingAdmin')

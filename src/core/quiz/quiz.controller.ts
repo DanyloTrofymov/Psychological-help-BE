@@ -33,7 +33,6 @@ export class QuizController {
 		@Query('page', ParseIntPipe) page: number = 0,
 		@Query('pageSize', ParseIntPipe) pageSize: number = 10
 	) {
-		console.log(req?.user?.id);
 		return this.quizService.findAll(page, pageSize, req?.user?.id);
 	}
 
