@@ -45,8 +45,8 @@ export class ChatroomController {
 	}
 
 	@Get('messages')
-	async getMessages(@Query('chatroomId') chatroomId: number, @Query('page') page: number = 0,
-		@Query('pageSize') pageSize: number = 10) {
+	async getMessages(@Query('chatroomId', ParseIntPipe) chatroomId: number, @Query('page', ParseIntPipe) page: number = 0,
+		@Query('pageSize', ParseIntPipe) pageSize: number = 10) {
 		return await this.chatroomService.getMessagesByChatroomId(chatroomId, page, pageSize);
 	}
 
