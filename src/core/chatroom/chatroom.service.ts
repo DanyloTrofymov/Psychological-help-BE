@@ -222,9 +222,9 @@ export class ChatroomService {
 			const question = take.quiz.questions.find(q => q.id === answer.questionId);
 			return { question, answer, score: question.answers.find(a => a.id === answer.answerId).score };
 		});
-		const answersString = answers.map(a => `${a.question.title} - ${a.answer.answerId} - ${a.score} юалів`).join('\n');
+		const answersString = answers.map(a => `${a.question.title} - ${a.answer.answerId} - ${a.score} балів`).join('\n');
 		const sumOfScores = answers.reduce((acc, a) => acc + a.score, 0);
-		const message = `Привіт! Я пройшов тест ${take.quiz.title}. Ось мої відповіді у форматі: Запитання - відповідь - бали. ${answersString}\n Результати тесту: ${sumOfScores} балів. Опис результату: ${take.quiz.summary}`;
+		const message = `Привіт! Я пройшов тест ${take.quiz.title}. Проаналізуй мої відповіді і дай поради. Ось мої відповіді у форматі: Запитання - відповідь - бали. ${answersString}\n Результати тесту: ${sumOfScores} балів. Опис результату: ${take.quiz.summary}`;
 		return message;
 	}
 
