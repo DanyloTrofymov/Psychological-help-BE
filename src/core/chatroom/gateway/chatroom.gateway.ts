@@ -92,9 +92,6 @@ export class ChatroomGateway
 		this.logger.log(`Client ${client.data.userId} created chatroom`);
 		const chatroom = await this.chatroomService.createChatroomUsers('Чат з терапевтом', client.data.userId);
 		client.emit('chatroomDetails', chatroom);
-		const therapists = await this.userService.getTherapists();
-		//const available = therapists.filter(t => !this.server.sockets.adapter.rooms.get(t.id.toString()));
-		//available.forEach(t => client.to(t.id.toString()).emit('pingTherapists', chatroom));
 	}
 
 	@SubscribeMessage('sendUserMessage')
