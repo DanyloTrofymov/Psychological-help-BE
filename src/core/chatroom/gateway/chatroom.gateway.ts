@@ -140,7 +140,7 @@ export class ChatroomGateway
 			.stream(threadId, {
 				assistant_id: process.env.OPENAI_ASSISTANT_ID
 			}).on('textDelta', (textDelta) => {
-				client.emit('aiPartMessage', { chatroomId: chatId, message: textDelta?.value } || '');
+				client.emit('aiPartMessage', { chatroomId: chatId, message: textDelta.value });
 				fullMessge += textDelta?.value || '';
 			})
 			.on('end', async () => {
