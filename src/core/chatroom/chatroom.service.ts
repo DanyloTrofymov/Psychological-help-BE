@@ -1,9 +1,8 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/integrations/prisma/prisma.service';
-import { Chatroom, ChatroomMessages, ChatroomParticipants, Role } from '@prisma/client';
+import { Chatroom, ChatroomMessages } from '@prisma/client';
 import { ROLE } from 'src/data/types';
 import { CurrentUserResponse } from '../auth/dto/auth.response';
-import { ChatroomGateway } from './gateway/chatroom.gateway';
 import OpenAI from 'openai';
 
 @Injectable()

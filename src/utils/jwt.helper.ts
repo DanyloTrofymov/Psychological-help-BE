@@ -30,7 +30,7 @@ export function verifyToken(request) {
 }
 
 function extractTokenFromHeader(request: any): string | null {
-	if (request && request.startsWith('Bearer ')) {
+	if (request?.startsWith('Bearer ')) {
 		return request.substring(7);
 	}
 	return null;

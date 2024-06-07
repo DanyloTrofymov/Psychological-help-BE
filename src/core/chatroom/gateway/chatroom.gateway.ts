@@ -8,7 +8,7 @@ import {
 	MessageBody,
 	ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server, Socket, Namespace } from 'socket.io';
+import { Socket, Namespace } from 'socket.io';
 import { ChatroomService } from '../chatroom.service';
 import { AuthService } from '../../auth/auth.service';
 import { UserService } from 'src/core/user/user.service';
@@ -20,7 +20,7 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 	namespace: '/chat',
 	cors: {
 		origin: (origin, cb) => {
-			if (origin == undefined || origin.includes(process.env.BASE_URL!)) {
+			if (origin == undefined || origin.includes(process.env.BASE_URL)) {
 				cb(null, true);
 			} else {
 				cb(new Error('Not allowed'), false);
@@ -53,14 +53,6 @@ export class ChatroomGateway
 
 	afterInit(namespace: Namespace) {
 		this.logger.log('WebSocket server initialized');
-		// Wait a tick to ensure server is fully initialized
-		setTimeout(() => {
-			if (namespace.sockets) {
-				namespace.sockets;
-			} else {
-				console.error('namespace sockets adapter is undefined');
-			}
-		}, 1000); // Adjust the delay as necessary
 	}
 
 

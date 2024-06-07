@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
 import { ChatroomGateway } from './gateway/chatroom.gateway';
 import { ChatroomController } from './chatroom.controller';
