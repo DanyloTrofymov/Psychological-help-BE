@@ -63,7 +63,8 @@ export class AuthService {
 								update: { url: avatarUrl }
 							}
 						}
-					: { disconnect: true }
+					: { disconnect: true },
+				lastActivity: new Date()
 			},
 			create: {
 				id: data.id,

@@ -14,6 +14,8 @@ import { MediaModule } from './core/media/media.module';
 import { TakeModule } from './core/take/take.module';
 import { ChatroomController } from './core/chatroom/chatroom.controller';
 import { ChatroomModule } from './core/chatroom/chatroom.module';
+import { CommonProblemsModule } from './core/common-problems/common-problems.module';
+import { HelpingCentersModule } from './core/helping-centers/helping-centers.module';
 
 @Module({
 	imports: [
@@ -22,7 +24,9 @@ import { ChatroomModule } from './core/chatroom/chatroom.module';
 		QuizModule,
 		MediaModule,
 		TakeModule,
-		ChatroomModule
+		ChatroomModule,
+		CommonProblemsModule,
+		HelpingCentersModule
 	],
 	controllers: [
 		AppController,

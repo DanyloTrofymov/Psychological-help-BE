@@ -14,13 +14,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  active    Boolean  @default(true)
-  avatarId  Int?
-  roleId    Int?     @default(0)
+  id           Int      @id
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  lastActivity DateTime @default(now())
+  active       Boolean  @default(true)
+  avatarId     Int?
+  roleId       Int?     @default(0)
 
   role                 Role?                  @relation(fields: [roleId], references: [id])
   avatar               Media?                 @relation(fields: [avatarId], references: [id])
@@ -189,4 +190,26 @@ model Role {
   user User[]
 
   @@map("roles")
+}
+
+model HelpingCenters {
+  id           Int      @id @default(autoincrement())
+  name         String
+  workingHours String
+  phone        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  @@map("helping_centers")
+}
+
+model CommonProblems {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  url         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@map("common_problems")
 }
