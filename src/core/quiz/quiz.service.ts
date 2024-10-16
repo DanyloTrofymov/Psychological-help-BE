@@ -47,37 +47,49 @@ export class QuizService {
 	async findAll(page: number, pageSize: number, userId: number) {
 		const skip = page * pageSize;
 		const take = pageSize;
+		const totalElements = await this.prismaService.quiz.count(); // Get total number of quizzes
+		const totalPages = Math.ceil(totalElements / pageSize);
+
 		const quizzes = await this.prismaService.quiz.findMany({
 			skip,
 			take,
 			include: {
 				media: true,
 				_count: {
-					select: { questions: true, take: true }, // Include the count of takes
-				},
-			},
+					select: { questions: true, take: true } // Include the count of takes
+				}
+			}
 		});
+
+		let content;
 		if (userId) {
-			const quizzesWithUserInfo = await Promise.all(
+			content = await Promise.all(
 				quizzes.map(async quiz => {
 					const userTakes = await this.prismaService.take.findMany({
 						where: {
 							quizId: quiz.id,
-							userId: userId,
-						},
+							userId: userId
+						}
 					});
 					const lastTake = userTakes[userTakes.length - 1];
 
 					return {
 						...quiz,
-						lastTakeId: lastTake?.id,
+						lastTakeId: lastTake?.id
 					};
 				})
 			);
-			return quizzesWithUserInfo;
 		} else {
-			return quizzes;
+			content = quizzes;
 		}
+
+		return {
+			page,
+			limit: pageSize,
+			totalElements,
+			totalPages,
+			content
+		};
 	}
 
 	async findOne(id: number) {
@@ -168,17 +180,17 @@ export class QuizService {
 
 	async getQuizStatistics(quizId: number) {
 		const quiz = await this.prismaService.quiz.findUnique({
-			where: { id: quizId },
+			where: { id: quizId }
 		});
 		const takes = await this.prismaService.take.findMany({
 			where: { quizId },
 			include: {
 				answers: {
 					include: {
-						answer: true,
-					},
-				},
-			},
+						answer: true
+					}
+				}
+			}
 		});
 
 		const totalScores = takes.map(take => {
@@ -188,47 +200,48 @@ export class QuizService {
 		});
 
 		const binSize = 5;
-		const scoreBins = Array(Math.ceil(quiz.maxScore / binSize)).fill(0).map((_, i) => ({
-			scoreMin: i * binSize,
-			scoreMax: (i + 1) * binSize - 1,
-			count: 0
-		}));
+		const scoreBins = Array(Math.ceil(quiz.maxScore / binSize))
+			.fill(0)
+			.map((_, i) => ({
+				scoreMin: i * binSize,
+				scoreMax: (i + 1) * binSize - 1,
+				count: 0
+			}));
 
 		totalScores.forEach(score => {
 			const binIndex = Math.floor(score / binSize);
 			scoreBins[binIndex].count += 1;
 		});
 
-
 		const questions = await this.prismaService.quizQuestion.findMany({
 			where: { quizId },
 			include: {
 				answers: {
 					include: {
-						takeAnswer: true,
-					},
-				},
-			},
+						takeAnswer: true
+					}
+				}
+			}
 		});
 
 		const answerCounts = questions.map(question => {
 			const answerCountMap = question.answers.map(answer => ({
 				answerId: answer.id,
 				answerTitle: answer.title,
-				count: answer.takeAnswer.length,
+				count: answer.takeAnswer.length
 			}));
 
 			return {
 				questionId: question.id,
 				questionTitle: question.title,
-				counts: answerCountMap,
+				counts: answerCountMap
 			};
 		});
 
 		return {
 			quizTitle: quiz.title,
 			scoreBins,
-			answerCounts,
+			answerCounts
 		};
 	}
 

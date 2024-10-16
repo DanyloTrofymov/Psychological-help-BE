@@ -43,7 +43,10 @@ export class QuizController {
 
 	@Patch(':id')
 	@Roles(ROLE.ADMIN)
-	update(@Param('id', ParseIntPipe) id: number, @Body() updateQuizDto: UpdateQuizDto) {
+	update(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() updateQuizDto: UpdateQuizDto
+	) {
 		return this.quizService.update(id, updateQuizDto);
 	}
 

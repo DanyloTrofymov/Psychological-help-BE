@@ -16,8 +16,20 @@ import { ChatroomController } from './core/chatroom/chatroom.controller';
 import { ChatroomModule } from './core/chatroom/chatroom.module';
 
 @Module({
-	imports: [PrismaModule, AuthModule, QuizModule, MediaModule, TakeModule, ChatroomModule],
-	controllers: [AppController, AuthController, QuizController, ChatroomController],
+	imports: [
+		PrismaModule,
+		AuthModule,
+		QuizModule,
+		MediaModule,
+		TakeModule,
+		ChatroomModule
+	],
+	controllers: [
+		AppController,
+		AuthController,
+		QuizController,
+		ChatroomController
+	],
 	providers: [
 		AppService,
 		{
@@ -31,7 +43,7 @@ import { ChatroomModule } from './core/chatroom/chatroom.module';
 		{
 			provide: APP_FILTER,
 			useClass: AllExceptionsFilter
-		},
+		}
 	]
 })
 export class AppModule {}
