@@ -44,4 +44,12 @@ export class TakeController {
 	findOne(@Param('id', ParseIntPipe) id: number) {
 		return this.takeService.findOne(id);
 	}
+
+	@Get('/quiz/:quizId/latest')
+	async findLatestUserTakeForQuiz(
+		@Request() req,
+		@Param('quizId', ParseIntPipe) quizId: number
+	) {
+		return this.takeService.findLatestUserTakeForQuiz(req?.user?.id, quizId);
+	}
 }

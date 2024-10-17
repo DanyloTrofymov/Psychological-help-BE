@@ -20,6 +20,7 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 	namespace: '/chat',
 	cors: {
 		origin: (origin, cb) => {
+			console.log('origin', origin);
 			if (origin == undefined || origin.includes(process.env.BASE_URL)) {
 				cb(null, true);
 			} else {
@@ -131,7 +132,10 @@ export class ChatroomGateway
 	}
 
 	@SubscribeMessage('AICreateChatroom')
-	async handleStartChat(client: Socket) {
+	async handleStartChat(
+		@MessageBody() data: { disableRunResponse: boolean },
+		@ConnectedSocket() client: Socket
+	) {
 		const thread = await this.openai.beta.threads.create();
 		const chatroom = await this.chatroomService.createChatroomAI(
 			'Асистент',
@@ -139,8 +143,11 @@ export class ChatroomGateway
 			thread.id,
 			true
 		);
-		await this.runAssistantStream(client, thread.id, chatroom.id);
 		client.emit('chatroomDetails', chatroom);
+		if (data.disableRunResponse) {
+			return;
+		}
+		await this.runAssistantStream(client, thread.id, chatroom.id);
 	}
 
 	@SubscribeMessage('sendAiMessage')

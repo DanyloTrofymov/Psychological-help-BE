@@ -67,4 +67,17 @@ export class QuizController {
 	getStatistics(@Param('id', ParseIntPipe) id: number) {
 		return this.quizService.getQuizStatistics(id);
 	}
+
+	@Get('my/unique')
+	async findUniqueQuizzesParticipatedByUser(
+		@Query('page', ParseIntPipe) page: number = 0,
+		@Query('pageSize', ParseIntPipe) pageSize: number = 10,
+		@Request() req
+	) {
+		return this.quizService.findUniqueQuizzesParticipatedByUser(
+			page,
+			pageSize,
+			req?.user?.id
+		);
+	}
 }

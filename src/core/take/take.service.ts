@@ -101,4 +101,17 @@ export class TakeService {
 			include: { answers: true }
 		});
 	}
+
+	async findLatestUserTakeForQuiz(userId: number, quizId: number) {
+		return this.prismaService.take.findFirst({
+			where: {
+				userId,
+				quizId
+			},
+			orderBy: {
+				createdAt: 'desc'
+			},
+			include: { answers: { include: { answer: true } }, quiz: true }
+		});
+	}
 }

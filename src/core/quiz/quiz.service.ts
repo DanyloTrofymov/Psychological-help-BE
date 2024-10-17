@@ -256,4 +256,41 @@ export class QuizService {
 
 		return maxScore || 0;
 	}
+
+	async findUniqueQuizzesParticipatedByUser(
+		page: number = 0,
+		pageSize: number = 10,
+		userId: number
+	) {
+		try {
+			const userTakes = await this.prismaService.take.findMany({
+				where: { userId },
+				select: { quizId: true }
+			});
+
+			const uniqueQuizIds = [...new Set(userTakes.map(take => take.quizId))];
+
+			const totalElements = uniqueQuizIds.length;
+			const totalPages = Math.ceil(totalElements / pageSize);
+			const skip = page * pageSize;
+			const take = pageSize;
+
+			const quizzes = await this.prismaService.quiz.findMany({
+				where: { id: { in: uniqueQuizIds } },
+				skip,
+				take
+			});
+
+			return {
+				page,
+				limit: pageSize,
+				totalElements,
+				totalPages,
+				content: quizzes
+			};
+		} catch (error) {
+			console.error(error);
+			throw new NotFoundException('No quizzes found for the user');
+		}
+	}
 }
