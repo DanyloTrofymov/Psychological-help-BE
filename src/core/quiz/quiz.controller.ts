@@ -43,7 +43,10 @@ export class QuizController {
 
 	@Patch(':id')
 	@Roles(ROLE.ADMIN)
-	update(@Param('id', ParseIntPipe) id: number, @Body() updateQuizDto: UpdateQuizDto) {
+	update(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() updateQuizDto: UpdateQuizDto
+	) {
 		return this.quizService.update(id, updateQuizDto);
 	}
 
@@ -63,5 +66,18 @@ export class QuizController {
 	@Roles(ROLE.ADMIN)
 	getStatistics(@Param('id', ParseIntPipe) id: number) {
 		return this.quizService.getQuizStatistics(id);
+	}
+
+	@Get('my/unique')
+	async findUniqueQuizzesParticipatedByUser(
+		@Query('page', ParseIntPipe) page: number = 0,
+		@Query('pageSize', ParseIntPipe) pageSize: number = 10,
+		@Request() req
+	) {
+		return this.quizService.findUniqueQuizzesParticipatedByUser(
+			page,
+			pageSize,
+			req?.user?.id
+		);
 	}
 }

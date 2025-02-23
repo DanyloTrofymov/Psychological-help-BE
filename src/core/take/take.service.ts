@@ -50,23 +50,68 @@ export class TakeService {
 		});
 	}
 
-	findAll() {
-		return this.prismaService.take.findMany({
+	async findAll(page: number, pageSize: number) {
+		const skip = page * pageSize;
+		const take = pageSize;
+		const totalElements = await this.prismaService.take.count();
+		const totalPages = Math.ceil(totalElements / pageSize);
+
+		const takes = await this.prismaService.take.findMany({
+			skip,
+			take,
 			include: { answers: true }
 		});
+
+		return {
+			page,
+			limit: pageSize,
+			totalElements,
+			totalPages,
+			content: takes
+		};
 	}
 
-	findMy(id: number) {
-		return this.prismaService.take.findMany({
+	async findMy(id: number, page: number = 0, pageSize: number = 10) {
+		const skip = page * pageSize;
+		const take = pageSize;
+		const totalElements = await this.prismaService.take.count({
+			where: { userId: id }
+		});
+		const totalPages = Math.ceil(totalElements / pageSize);
+
+		const takes = await this.prismaService.take.findMany({
 			where: { userId: id },
+			skip,
+			take,
 			include: { answers: true }
 		});
+
+		return {
+			page,
+			limit: pageSize,
+			totalElements,
+			totalPages,
+			content: takes
+		};
 	}
 
 	findOne(id: number) {
 		return this.prismaService.take.findUnique({
 			where: { id },
 			include: { answers: true }
+		});
+	}
+
+	async findLatestUserTakeForQuiz(userId: number, quizId: number) {
+		return this.prismaService.take.findFirst({
+			where: {
+				userId,
+				quizId
+			},
+			orderBy: {
+				createdAt: 'desc'
+			},
+			include: { answers: { include: { answer: true } }, quiz: true }
 		});
 	}
 }

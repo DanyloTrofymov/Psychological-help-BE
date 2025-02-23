@@ -56,13 +56,15 @@ export class AuthService {
 			update: {
 				id: data.id,
 				name: data.first_name,
-				avatar: avatarUrl ?
-					{
-						upsert: {
-							create: { type: 'image', url: avatarUrl },
-							update: { url: avatarUrl }
+				avatar: avatarUrl
+					? {
+							upsert: {
+								create: { type: 'image', url: avatarUrl },
+								update: { url: avatarUrl }
+							}
 						}
-					} : { disconnect: true }
+					: { disconnect: true },
+				lastActivity: new Date()
 			},
 			create: {
 				id: data.id,
@@ -117,6 +119,7 @@ export class AuthService {
 		const sortedKeys = Object.keys(data).sort();
 		const keyValuePairs = sortedKeys
 			.filter(key => key !== 'hash')
+			.filter(key => !!data[key])
 			.map(key => `${key}=${data[key]}`);
 		return keyValuePairs.join('\n');
 	}
